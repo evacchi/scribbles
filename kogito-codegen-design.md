@@ -1,34 +1,55 @@
-# Kogito Codegen Design
+---
+title:  'Kogito: A Modular Codegen Design Proposal'
+categories: [Compilers, Kogito]
+date:   2020-04-22
+---
 
-My favorite topic of discussion last year was _moving computations to compile-time_. In fact, I went to a few conferences explaining how **moving processing out of your run-time and into build-time**, is a **conceptually simple** but **extremely effective way** to make your applications lighter. This was sometimes received with **little enthusiasm*: the idea itself is in fact far from new. Yet, it is key to a lot of the most interesting recent innovations in the Java ecosystem.
+My favorite topic of discussion last year was _moving computations to compile-time_. 
 
-The love for **run-time reflection** is a historical peculiarity of the Java ecosystem. However, today **a lot of modern Java frameworks are embracing code generation**; which is ironic, because run-time reflection was often embraced as a reaction to slow code generation procedures. 
+<div style="float:right">
+<img src="https://i.imgur.com/cHmSoB8.png" title="Reflection" />
+</div>
 
-In **Kogito**, we are using code generation to **pre-process** and **compile** so-called "business assets" into **executable code**. In the following we will explore the history and the motivations for embracing code generation instead of run-time reflection, and how we plan to bring our approach to codegen forward, by **taking hints from compiler design**.
+In fact, I went to [a few][vdm19] [conferences][qconsp19] explaining how **moving processing out of your run-time and into build-time**, is a **conceptually simple** but **extremely effective way** to make your applications lighter. This was sometimes received with **little enthusiasm**: the idea itself is in fact far from new. Yet, it is key to a lot of the most interesting recent innovations in the Java ecosystem.
+
+For better or worst, **run-time reflection** is a peculiarity of the Java ecosystem. However, today **a lot of modern Java frameworks are embracing code generation**; which is ironic, because, as far as I know, run-time reflection was often embraced as a reaction to slow code generation procedures. 
+
+In **[Kogito][kogito]**, we are using code generation to **pre-process** and **compile** so-called "business assets" into **executable code**. In the following we will explore the history and the motivations for embracing code generation instead of run-time reflection, and how we plan to bring our approach to codegen forward, by **taking hints from compiler design**.
 
 ## Run-Time vs. Build-Time Meta-Programming 
 
-There are many reasons why many developers prefer reflection to code-generation. 
+I believe there are many reasons why often we reach for run-time reflection, but I will name two; 
 
-First of all, the reflection API is "standard": it is bundled with the JDK and it is relatively easy to use: it allows developers to implement  meta-programming logic with the tools they already know. 
+1. the reflection API is "standard": it is bundled with the JDK and it is relatively easy to use; it allows developers to implement some meta-programming logic with the tools they already know. 
 
-Moreover, using run-time reflection allows to **keep build time low** and it allows for **more degrees of freedom at run-time**. It's not like the platform does not support compile-time manipulation: although there is no "proper" macro support, there _are_ compile-time meta-programming facilities in the **annotation processing framework**; but, for instance, code-generation tooling itself is not really standardized: some people use ASM for bytecode generation; other generate source code using JavaPoet, JavaParser or other similar libraries. 
+2. run-time reflection keeps **build time low** and it allows for **more degrees of freedom at run-time**. 
+
+But the JDK _does_ support compile-time manipulation: although there is no "proper" macro support, there _are_ compile-time meta-programming facilities in the [**annotation processing framework**][annotations]. But then, although the annotation processor framework provides way to hook into the Java compiler and _process_ code,  is does not provide a standardized set of tools to _generate_ code. Some people use [ASM][asm] for bytecode generation; other generate source code using [JavaPoet][javapoet], [JavaParser][javaparser] or other similar libraries. 
+
+And I believe, this is another reason, why people choose reflection: you don't need to _generate_ code at all.
 
 ### The Price of Run-Time Reflection
 
-For this and other reasons code-generation has become a lesser citizen of the Java ecosystem. However, **run-time reflection comes at a price**.
-For instance, your reflection logic must be rock-solid: otherwise any programming errors instead of being caught at compile-time, will be moved to run-time reflective logic, which is often harder to debug.
-Moreover, moving meta-programming logic in the run-time of your application impacts performance: first of all, reflective method invocations are usually slower than direct invocations, but also meta-programming logic will run concurrently with your main program logic, inevitably adding overhead to execution. 
+For this and other reasons code-generation has become a lesser citizen of the Java ecosystem. However, **run-time reflection comes at a price**. From the top of my head: 
+
+- **your reflection logic _must_ be rock-solid**: otherwise many compile-time errors will turn into run-time errors; i.e. errors into your reflective logic
+- **moving meta-programming logic in the run-time** of your application [**impacts performance**][reflection]: not only are reflective invocations usually slower than direct invocations, but also meta-programming logic will run as part of your main program logic, inevitably adding overhead to execution. 
 
 Traditionally, this was not regarded as a huge burden: in fact, Java programs used to be long-running and often server-side; the overhead of run-time reflection, being usually paid at application configuration and startup time, was considered irrelevant, because it was tiny, compared to the time they would run. 
 
 ### Rediscovering Code Generation
 
-Today **a lot of frameworks** are actually going back to build-time code generation: **Kogito** is one of those.
+<div style="float:right; padding-left: 2em">
+<img src="https://i.imgur.com/mgInxYI.png" title="The Dragon Book"/>
+</div>
 
-In the last few years, **the programming landscape has changed**; for instance, constrained platforms such as Android used to have more limited support for runtime reflection different performance requirements: applications should be small and quick to start. People started to develop **microservices** and **serverless applications**: these services need to start very quickly, to elastically scale with the number of incoming requests. **GraalVM's native image compiler** is another run-time platform with additional constraints: it allows to compile a Java program into a native executable, but originally, it posed a few limitations on run-time reflection. Moreover, whereas in the past fat, long-running application servers hosted several, possibly mutable applications in a single process space, today we deploy **separate, stand-alone, immutable, containerized applications** on Kubernetes. For all these, and other reasons, in the last few years **the Java ecosystem is rediscovering code-generation**. 
+Today **[a lot][micronaut] of [frameworks][quarkus]** are actually going back to build-time code generation: **Kogito** is one of those.
 
-The Kogito code-generation procedure elaborates all the "knowledge assets" in a codebase and produces equivalent Java code that plugs into our core engines on one side, and into the Quarkus or Spring APIs to expose automatically generated REST service endpoints on the other. Let's see more in detail how this procedure works.
+In the last few years, **the programming landscape [has changed][cdilite]**; for instance, constrained platforms such as Android used to have more limited support for runtime reflection different performance requirements: applications should be small and quick to start. People started to develop **microservices** and **serverless applications**: these services need to start very quickly, to elastically scale with the number of incoming requests. **GraalVM's native image compiler** is another run-time platform with additional constraints: it allows to compile a Java program into a native executable, but originally, it posed a few limitations on run-time reflection. Moreover, whereas in the past fat, long-running application servers hosted several, possibly mutable applications in a single process space, today we deploy **separate, stand-alone, immutable, containerized applications** on Kubernetes. For all these, and other reasons, in the last few years **the Java ecosystem is rediscovering code-generation**. 
+
+The Kogito code-generation procedure elaborates all the "knowledge assets" in a codebase and produces equivalent Java code that plugs into our core engines on one side, and into the Quarkus or Spring APIs to expose automatically generated REST service endpoints on the other. 
+
+Let's see more in detail how this procedure works.
 
 ## Staged Compilation in Kogito
 
@@ -52,9 +73,13 @@ First, **processes** (BPMN files) are analyzed, then **rules** (DRLs), then **de
 
 In fact, albeit we are processing each type of asset in a _separate stage_, each stage is effectively a **single-pass compiler**, because each it always terminates with the generation of the compilation target. This is the reason why it is generally better to **break down compilation into more passes**. Each compilation pass usually produces what is called an **intermediate representation**; the input to one stage is the output of the previous, and so on up to the final stage, where target code is actually produced.
 
+### Compilers and Compilation Phases
+
 In a traditional compiler, usually, one of the first stages is **parsing** the input source code and transforming it into an internal tree representation (the *Abstract Syntax Tree*); then usually is the **name resolution** phase, where the names of the values and symbols that are used throughout the program are resolved; then the **type-checking phase** verifies and validates the correctness of the program; finally **code** is actually **generated**.
 
 In Kogito, we **parse** knowledge assets, then we associate **names** to each assets, and we resolve their internal structure, which may **cross-reference** other existing assets. **Type-checking our assets means validating** the models according to specifications and verifying these cross-references. For instance, a BPMN file may reference a Rule Unit definition and a service implementation written in Java. 
+
+### Compilers and Mini-Phases
 
 So far, our code-generation procedure has been pretty simplistic: we generated code regardless of potential errors, delegating compilation errors to the downstream Java compiler; worse, sometimes they would be caught later at run-time! This in general works, but it either produces pretty obscure compilation errors, or it moves validation too late in the pipeline: which is something that we wanted to avoid in the first place. We want to **catch errors early** and only **generate valid code**.
 
@@ -69,7 +94,7 @@ By refactoring our compilation phases to a staged, modular compilation architect
     +-----------------+      +------------------+      +-------------------+      +-----------------+
 
 
-For instance, suppose you want to synthesize some elements (e.g. data models) that are inferred from the structure of a process. In our current architecture, the only way to produce additional assets would be to patch the existing code. By de-composing the phases as shown above, you would be able to **plug your additional mini-phase** right after "Model Validation", so that you can be sure that all the names have been resolved, and that only valid models will be processed: you will produce an intermediate representation for the data model that you want to synthesize, and make it available during the "Cross-Referencing" phase.
+For instance, suppose you want to synthesize some elements (e.g. data models) that are inferred from the structure of a process. In our current architecture, the only way to produce additional assets would be to patch the existing code. By de-composing the phases as shown above, you would be able to **plug your additional [mini-phase][nanopass]** right after "Model Validation", so that you can be sure that all the names have been resolved, and that only valid models will be processed: you will produce an intermediate representation for the data model that you want to synthesize, and make it available during the "Cross-Referencing" phase.
 
 ## Pre-Processing Assets vs. Code Scaffolding.
 
@@ -117,3 +142,16 @@ In the case of scaffolding, code should not be generated in your compilation tar
 You should now have a better understanding of the rationale for code generation in Kogito: in the future we are going to improve our code generation procedure to allow extensibility by plugging into the code-generation process, and customization by allowing end-users to promote code generation to scaffolding.
 
 In the future we will further document how we plan to refactor our codebase to support these novel use cases. 
+
+[kogito]: https://kogito.kie.org
+[vdm19]: https://youtu.be/TWfigR9wGsA
+[qconsp19]: https://www.youtube.com/watch?v=BUrY6On1SxM
+[annotations]: https://docs.oracle.com/en/java/javase/11/docs/api/java.compiler/javax/annotation/processing/package-summary.html
+[asm]: https://asm.ow2.io/
+[javapoet]: https://github.com/square/javapoet
+[javaparser]: https://javaparser.org/ 
+[reflection]: https://www.optaplanner.org/blog/2018/01/09/JavaReflectionButMuchFaster.html
+[nanopass]: https://nanopass.org/
+[micronaut]: https://micronaut.io
+[quarkus]: https://quarkus.io
+[cdilite]: http://www.cdi-spec.org/news/2020/03/09/CDI_for_the_future/
