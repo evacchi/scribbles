@@ -1,21 +1,7 @@
-# Example: Embedded Rule Languages
+# Example: Annontated Rule Definitions
 
-## Motivation
-
-Today, Kogito only supports DRL. It is not possible to use a different
-programming language apart from the Java dialect in the consequences, 
-nor is it possible to use plain Java to express rules, but only DRL files.
-
-## Goal
-
-The goal is to realize a mechanism to plug different language implementations,
-into the rule engine, while, at the same time, keep the burden low for maintainers
-of the platform.
-
-## Description
-
-We propose to use annotations to decorate methods in a traditional JVM language. 
-These annotations will contain the constraints; the body of the methods
+We propose special annotations to decorate methods in a traditional JVM language. 
+These annotations will contain rule constraints; the body of the methods
 will contain the consequence. For instance, in Java:
 
 ```java
@@ -34,7 +20,19 @@ public class AnnotatedUnit implements RuleUnitMemory {
 The same technique can be applied to different programming languages
 (e.g. Kotlin, Scala, etc.) thereby allowing for _polyglot_ rule definitions.
 
-This relieves developers from the burden of supporting yet-another
+## Motivation
+
+Today, Kogito only supports DRL. It is not possible to use a different
+programming language apart from the Java dialect in the consequences, 
+nor is it possible to use plain Java to express rules, but only DRL files.
+
+## Goal
+
+The goal is to realize a mechanism to plug different language implementations,
+into the rule engine, while, at the same time, keep the burden low for maintainers
+of the platform.
+
+Annotated methods relieve developers from the burden of supporting yet-another
 language implementation, and let the users pick a language of their choosing
 to write rules.
 

@@ -1,5 +1,8 @@
 # Example: Persistence Abstraction Layer
 
+We propose a plug-in mechanism for the storage backend so that
+different persistence implementations can be supported.
+
 ## Motivation
 
 Today, only IncredibleDB is allowed as a persistence backend. 
@@ -13,11 +16,6 @@ However, IncredibleDB has several limitations:
 
 We want to be able to plug different storage mechanisms
 depending on varying requirements.
-
-## Description
-
-We propose a plug-in mechanism for the storage backend so that
-different persistence implementations can be supported.
 
 ## Implementation
 

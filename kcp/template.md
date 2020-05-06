@@ -1,3 +1,11 @@
+# Title of the Feature
+
+The feature should be introduced by a summary that briefly explains it.
+
+It should show how it is the solution to the problem stated 
+in the motivation section and how it produces the result 
+described in the goal section.
+
 ## Motivation
  
 What is the problem in the current state of the project
@@ -5,10 +13,6 @@ What is the problem in the current state of the project
 ## Goal
 
 What is the result that we want to achieve
-
-## Description
-
-What is the solution that produces that result
 
 ## Implementation
 
