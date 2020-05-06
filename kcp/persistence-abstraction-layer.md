@@ -11,6 +11,11 @@ However, IncredibleDB has several limitations:
 
 ## Goal
 
+We want to be able to plug different storage mechanisms
+depending on varying requirements.
+
+## Description
+
 We propose a plug-in mechanism for the storage backend so that
 different persistence implementations can be supported.
 
@@ -32,3 +37,13 @@ New implementations should mimic the behavior of such a document store.
 
 ....
 
+## Impact
+
+## Pros
+
+- more storage backends can be supported
+
+## Cons
+
+- additional maintainance cost
+- we need to get the abstraction right or we end up with least common denominator

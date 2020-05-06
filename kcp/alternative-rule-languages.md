@@ -3,15 +3,20 @@
 ## Motivation
 
 Today, Kogito only supports DRL. It is not possible to use a different
-programming language than the Java dialect of the consequences, 
+programming language apart from the Java dialect in the consequences, 
 nor is it possible to use plain Java to express rules, but only DRL files.
 
 ## Goal
 
-We propose a mechanism to plug different language implementations,
-into the rule engine, by pre-processing traditional compilation units,
-decorated through annotations; e.g.:
+The goal is to realize a mechanism to plug different language implementations,
+into the rule engine, while, at the same time, keep the burden low for maintainers
+of the platform.
 
+## Description
+
+We propose to use annotations to decorate methods in a traditional JVM language. 
+These annotations will contain the constraints; the body of the methods
+will contain the consequence. For instance, in Java:
 
 ```java
 public class AnnotatedUnit implements RuleUnitMemory {
@@ -26,13 +31,16 @@ public class AnnotatedUnit implements RuleUnitMemory {
 	...
 ```
 
-This relieves us as developers from the burden to support yet-another
-language implementation, and frees users from using the language
-they prefer to write rules.
+The same technique can be applied to different programming languages
+(e.g. Kotlin, Scala, etc.) thereby allowing for _polyglot_ rule definitions.
 
-The initial goal of this proposal is to realize a throwaway PoC for the feature.
+This relieves developers from the burden of supporting yet-another
+language implementation, and let the users pick a language of their choosing
+to write rules.
 
 ## Implementation
+
+The initial goal of this proposal will be to realize a throwaway PoC for the feature.
 
 1. An annotation processor pre-processes a Java class and generates a DRL file
 
@@ -74,8 +82,9 @@ The initial goal of this proposal is to realize a throwaway PoC for the feature.
   code generation pipeline, which resumes work from there.
 
 
+## Impact
 
-### Benefits:
+### Pros
 
 - it is always possible to compile this class file. 
 - It is always possible to add a break point inside of the rule body!
@@ -85,9 +94,9 @@ The initial goal of this proposal is to realize a throwaway PoC for the feature.
   delegated to the host language compiler
 
 
-### Downsides
+### Cons
 
-we may need to think of a way to break up large rule bases 
+- we may need to think of a way to break up large rule bases 
 in a language-meaningful way (many interfaces with default methods, 
 mixing-in in a class? a delegate system? disallow it because we favor smaller 
 rule bases, and usage of rule unit dispatch?)
