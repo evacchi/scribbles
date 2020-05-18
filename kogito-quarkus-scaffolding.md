@@ -73,7 +73,7 @@ class UserRegistrationResource {
 
 ## Why Generating Source Code
 
-A common question is why we decided to generate **source code** instead of bytecode. There are several answers.
+A common question is why we decided to generate **source code** instead of bytecode. There are at least two answers.
 
 ### Typed APIs and Executable Model
 
