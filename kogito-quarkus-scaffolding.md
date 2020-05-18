@@ -1,4 +1,4 @@
-# Kogito Quarkus Extension Design
+# Scaffolding Code in Kogito with Quarkus
 
 The Kogito code generation process is "staged"; each stage is responsible for a different business asset (e.g. Processes, Rules, etc.). [Read more in this blog post][blog]. In the following:  
 
