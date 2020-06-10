@@ -1,0 +1,173 @@
+Code Scaffolding
+================
+
+[WARNING]
+====
+This feature is experimental. The following documentation is intended as a preview 
+of a feature that will become final in a future release. 
+====
+
+A Kogito project generates a REST service from business assets automatically. The generated service usually exposes default REST endpoints, using the information that can be inferred from the business assets that you are including in your project. 
+
+Under the hood, our Quarkus extension and Maven plug-in generate all the required code and boilerplate, so that you do not have to write it yourself. However, there may be occasions when you might want to _customize_ such code. For instance, if you want to add _more_ endpoints beside the default `GET`/`POST`/`DELETE` that are usually provided.
+
+In these situation, you can _promote_ the generated code to _scaffolding_. If you opt-in to _scaffolding_ instead of _automatic generation_, the code that is generated becomes _yours_. Kogito will generate such code in a directory of your choice, with an explicit command. Kogito will no longer re-generate it, unless you invoke such command again.
+
+Setting up the Project
+----------------------
+
+[WARNING]
+====
+This feature is experimental and requires a special project setup. The generated code uses APIs that in Kogito are still considered non-final, and they **will** break in future releases.
+====
+
+The following instructions will _disable_ automated code generation for your project. If you need to re-generate the code, make sure to follow the steps described in the next section (Scaffold the Project). In the case of Quarkus, this also means that business assets _will not_ be re-generated on the fly. This is a known limitation and we are working to improve it.
+
+### Quarkus Setup
+
+If you are using Quarkus, generate a project as usual using the Kogito Maven archetype, but make sure to **delete** the following line in the generated `pom.xml`:
+
+```
+<dependencies>
+    ...
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-quarkus</artifactId>
+    </dependency>
+</dependencies>
+```
+
+then, instead add the Kogito Maven plug-in:
+```
+<build>
+    ...
+    <plugins>
+        ...
+        <plugin>
+            <groupId>org.kie.kogito</groupId>
+            <artifactId>kogito-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>none</phase>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+Business assets _will no longer_ be re-generated on the fly neither in developer mode nor at build time.
+This is a known limitation and we are working to improve it.
+
+### Spring Boot Setup
+
+
+If you are using Spring Boot, generate a project as usual using the Kogito Maven archetype, but make sure to _modify_ the Kogito Maven plug-in configuration in the generated `pom.xml` as follows:
+```
+<build>
+    ...
+    <plugins>
+        ...
+        <plugin>
+            <groupId>org.kie.kogito</groupId>
+            <artifactId>kogito-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>none</phase>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+Business assets _will no longer_ be re-generated at build time.
+This is a known limitation and we are working to improve it.
+
+
+Scaffold the Project
+--------------------
+
+_Scaffolding_ means automatically generating code, but, as opposed to the usual Kogito workflow, it also means that the code will be generated in a _user directory_ once and _will not_ be re-generated again, unless you explicitly request it. In order to generate the code, type the following command at your terminal:
+
+```
+$ mvn compile \
+    org.kie.kogito:kogito-maven-plugin:generateModel  \
+    -Dkogito.codegen.sources.directory=src/main/java        
+```
+
+- the `compile` goal pre-compiles the assets that are already in your project;
+- the `org.kie.kogito:kogito-maven-plugin:generateModel` goal generates the code;
+- the property `kogito.codegen.sources.directory` controls the target directory for code generation: in this example we are using `src/main/java`. You may pick a different directory if you configure your Maven project accordingly. The usual default is `target/generated-sources/kogito`.
+
+
+[WARNING]
+====
+If you invoke the generation command twice with the same target directory, the files will be **unconditionally overwritten**. 
+This will be fixed in a future release.
+====
+
+
+Under `src/main/java` you will now find:
+
+- Your previously existing files
+- Generated data classes corresponding to process variables or DMN definitions
+- Generated REST endpoints
+
+For instance, generated REST endpoints for a Quarkus project with a BPMN asset `persons` will look similar to this example:
+
+```
+package org.acme.travels;
+
+// imports...
+
+@Path("/persons")
+@ApplicationScoped
+public class PersonsResource {
+
+    @Inject
+    @Named("persons")
+    Process<PersonsModel> process;
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public PersonsModelOutput createResource_persons(
+            @Context HttpHeaders httpHeaders, 
+            @QueryParam("businessKey") String businessKey, 
+            @Valid @NotNull PersonsModelInput resource) {
+        ...
+    }
+
+    // other endpoints ...
+}
+```
+
+
+`PersonsModel`, `PersonModelInput`, `PersonsModelOutput` are the generated data models. These are inferred automatically from the process variables that are present in the process. Input and output model are inferred by how you may have _tagged_ your process variables (see Variable Tagging for details.) 
+
+Similar endpoints are generated when rule units are used. In this case, if you had a `PersonValidationService` class defining your rule unit model, then your endpoint would look similar to the following:
+
+```
+package org.acme.travels;
+
+// imports...
+
+@Path("/persons-validation-service")
+@ApplicationScoped
+public class PersonsValidationServiceResource {
+
+    @Inject
+    RuleUnit<PersonValidationService> unit;
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public QueryResult fireRules(PersonValidationService resource) {
+        ...
+    }
+
+    // other endpoints ...
+}
+```
+
