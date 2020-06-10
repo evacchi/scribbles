@@ -27,7 +27,7 @@ The following instructions will _disable_ automated code generation for your pro
 
 If you are using Quarkus, generate a project as usual using the Kogito Maven archetype, but make sure to **delete** the following line in the generated `pom.xml`:
 
-```
+```xml
 <dependencies>
     ...
     <dependency>
@@ -38,7 +38,8 @@ If you are using Quarkus, generate a project as usual using the Kogito Maven arc
 ```
 
 then, instead add the Kogito Maven plug-in:
-```
+
+```xml
 <build>
     ...
     <plugins>
@@ -63,7 +64,8 @@ This is a known limitation and we are working to improve it.
 
 
 If you are using Spring Boot, generate a project as usual using the Kogito Maven archetype, but make sure to _modify_ the Kogito Maven plug-in configuration in the generated `pom.xml` as follows:
-```
+
+```xml
 <build>
     ...
     <plugins>
@@ -90,7 +92,7 @@ Scaffold the Project
 
 _Scaffolding_ means automatically generating code, but, as opposed to the usual Kogito workflow, it also means that the code will be generated in a _user directory_ once and _will not_ be re-generated again, unless you explicitly request it. In order to generate the code, type the following command at your terminal:
 
-```
+```sh
 $ mvn compile \
     org.kie.kogito:kogito-maven-plugin:generateModel  \
     -Dkogito.codegen.sources.directory=src/main/java        
@@ -116,7 +118,7 @@ Under `src/main/java` you will now find:
 
 For instance, generated REST endpoints for a Quarkus project with a BPMN asset `persons` will look similar to this example:
 
-```
+```java
 package org.acme.travels;
 
 // imports...
@@ -148,7 +150,7 @@ public class PersonsResource {
 
 Similar endpoints are generated when rule units are used. In this case, if you had a `PersonValidationService` class defining your rule unit model, then your endpoint would look similar to the following:
 
-```
+```java
 package org.acme.travels;
 
 // imports...
