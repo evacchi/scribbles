@@ -76,3 +76,27 @@ In other words, the case when the class is annotated as `@DataSource` may defaul
 
 We should also **deprecate** the usage of `DataSource<T>` fields when the intended use case is stateless, and instead use `List<T>`.
 footnote:[we can optimize the `from` node to a real entry point internally.]
+
+
+### Writing The Result
+
+In the simplest case:
+
+```java
+@DataSource(type=KAFKA)
+public class People implements Context {
+    String name;
+    int age;
+    List<Address> address;
+}
+```
+
+Provided that the user has defined a query; e.g.:
+
+```drl
+query some_result
+   /address[ street == "main" ]
+end
+```
+
+the result of the query could be pushed to a kafka topic named after the query itself (in this case "some_result") -- similarly to how processes in Kogito handle Kafka messages.
