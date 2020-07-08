@@ -1,0 +1,78 @@
+
+Data Contexts
+=============
+
+We propose an alternative way to define `RuleUnitData` classes, which is more flexible and should work better in the long run.
+
+
+## Current Status
+
+In Kogito/Drools a RuleUnit is defined by declaring a RuleUnitData implementation:
+
+
+```java
+public class Person implements RuleUnitData {
+    String name;
+    int age;
+    DataSource<Address> addresses;
+}
+```
+
+This generates a few files, including a REST endpoint accepting the payload:
+
+```json
+{
+    "name": "John",
+    "age": 40,
+    "addresses": [...]
+}
+```
+
+i.e. the JSON serialization of `Person`. The expected JSON payload is automatically adapted so that the `DataSource` field pulls data from a JSON Array. 
+
+
+## Proposal
+
+We introduce the _Context_ or _Data Context_  term. A `Context` is equivalent to a `RuleUnitData`, in that it defines the way data is provided to a runtime.
+
+We specify where data is pulled from by annotating the class or the fields in the class (strawman syntax):
+
+
+```java
+@DataSource(type=HTTP)
+public class Person implements Context {
+    String name;
+    int age;
+    List<Address> address;
+}
+```
+
+Meaning that the source of data (an HTTP endpoint) will produce a `Person` instance, that will be fed into the rule engine. Rules will handle the `name`, `age` and `address` fields. This is effectively equivalent to what we have now in Kogito.
+
+But we can support other types of data sources:
+
+```java
+@DataSource(type=KAFKA)
+public class People implements Context {
+    String name;
+    int age;
+    List<Address> address;
+}
+```
+
+Moreover, this syntax scales better in the presence of _many_ data sources.
+
+In the presence of multiple DataSource declarations, we are _implicitly_ declaring that the RuleUnit must survive to multiple requests to make sense; e.g.:
+
+
+```java
+public class MonitoringService implements Context {
+    @DataSource(type=HTTP) DataSource<Sensor> sensors;
+    @DataSource(type=KAFKA) DataSource<Alert> alerts;
+}
+```
+
+In other words, the case when the class is annotated as `@DataSource` may default to the stateless use case, while the case with multiple `@DataSource` fields would default to stateful.
+
+We should also **deprecate** the usage of `DataSource<T>` fields when the intended use case is stateless, and instead use `List<T>`.
+footnote:[we can optimize the `from` node to a real entry point internally.]
