@@ -1,7 +1,11 @@
 # Codegen Guidelines
 
-
-TIP: Rule of Thumb: You should generate the code that you would write by hand, if there was no codegen step. 
+.Rule of Thumb
+[TIP]
+====
+1. You should generate the code that you would write by hand, if there was no codegen step.
+2. Before you open a PR, take a look at the code you generate, and verify it follows rule 1. 
+====
 
 ## Templates
 
@@ -51,8 +55,8 @@ u.findAll(
 ## Writing Effective Templates
 
 
-1. Move shared, non-dynamic code to non-generated classes (libraries or inheritable classes) 
-2. Specialize runtime-specific annotation/behavior (Quarkus vs. Spring) using templates if possible (inherit or call libary methods) 
+1. Move shared, non-dynamic code to plain classes 
+2. Specialize runtime-specific annotation/behavior (Quarkus vs. Spring) using templates if possible (inherit or call library methods) 
 3. Templates should be framework-specific
 
 ### Framework-Specific Templates
@@ -89,14 +93,21 @@ There are also:
 - `CdiApplicationConfigTemplate` for CDI 
 - `ApplicationConfigTemplate` for non-DI cases
 
+
+TIP: If you realize your template has _no_ placeholders,
+then there may be an opportunity for **promoting it to a plain shared class**. 
+
 ====
 
 
 ### Framework-Agnostic Templates
 
-These templates are "customized" using an *Annotator*. We provide an Annotator for Spring and CDI (Quarkus). Annotators decorate methods of a template using framework-specific annotations.  
+A framework-agnostic templates is "customized" using an *Annotator*. 
+We provide an Annotator for Spring and one for CDI (Quarkus). Annotators decorate methods of a template using framework-specific annotations.  
 
-These templates are largely the same for all frameworks we support. However, If a template is largely the same for all frameworks, you should consider *refactoring to a common shared class/library*.
+These templates are largely the same for all frameworks we support. However:
+
+TIP: If a template is largely the same for all frameworks, you should consider **refactoring to a plain shared class**.
 
 
 .Framework-Agnostic Template
@@ -129,9 +140,9 @@ Generator code may use annotators to decorate the fields and classes with framew
 
 ### Conditional Logic in Codegen Procedures
 
-You should avoid using conditional logic in code generation procedures.
+You should _avoid_ using conditional logic in code generation procedures.
 
-Good code-generation procedures should not conditionally decide whether a piece of code should be generated "inline"; code generation should strive to push decision logic at the beginning, and then only instantiate the correct template.
+Good code-generation procedures _should not_ conditionally decide whether a piece of code should be generated "inline"; code generation should strive to push decision logic at the _beginning_, and then only instantiate the correct template.
 
 The remaining logic should only deal with selecting and replacing placeholders.
 
@@ -219,7 +230,7 @@ CompilationUnit u = parse(resource);
 Consider the following example.
 
 
-[code,java]
+[source,java]
 ----
 @Component("Travelers")
 public class TravelersProcess extends AbstractProcess<TravelersModel> {
