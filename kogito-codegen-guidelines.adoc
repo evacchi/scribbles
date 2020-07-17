@@ -271,11 +271,11 @@ Consider the following example.
 
 [source,java]
 ----
-@Component("Travelers")
+@org.springframework.stereotype.Component("Travelers")
 public class TravelersProcess extends AbstractProcess<TravelersModel> {
 
     // field injection
-    @Autowired(required = false)
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
     Collection<WorkItemHandler> handlers;
 
     Application app;
