@@ -132,8 +132,47 @@ public class $Type$MessageConsumer {
 
 ----
 
-Generator code may use annotators to decorate the fields and classes with framework-specific directives.
+Generator code may use annotators to decorate fields and classes with framework-specific directives. 
 
+
+.MessageConsumerGenerator.java
+[source,java]
+----
+    annotator.withApplicationComponent(template);
+    
+    template.findAll(FieldDeclaration.class,
+                        fd -> isProcessField(fd)).forEach(fd -> annotator.withNamedInjection(fd, processId));
+    template.findAll(FieldDeclaration.class,
+                        fd -> isApplicationField(fd)).forEach(fd -> annotator.withInjection(fd));
+
+----
+
+
+This is the end-result when the class is rendered:
+
+
+.TravelersMessageConsumer_3.java
+[source,java]
+----
+@javax.enterprise.context.ApplicationScoped()
+public class TravelersMessageConsumer_3 {
+
+    @javax.inject.Inject()
+    @javax.inject.Named("Travelers")
+    Process<TravelersModel> process;
+
+    @javax.inject.Inject()
+    Application application;
+
+    @org.eclipse.microprofile.config.inject.ConfigProperty(name = "kogito.messaging.as-cloudevents")
+    Optional<Boolean> useCloudEvents = Optional.of(true);
+
+    @org.eclipse.microprofile.reactive.messaging.Incoming("travellers")
+    public void consume(String payload) {
+        ...
+    }
+}
+----
 
 ====
 
