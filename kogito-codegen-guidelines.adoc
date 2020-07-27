@@ -102,12 +102,16 @@ then there may be an opportunity for **promoting it to a plain shared class**.
 
 ### Framework-Agnostic Templates
 
-A framework-agnostic templates is "customized" using an *Annotator*. 
+WARNING: We describe this technique because it is being used, but, whenever possible, you should prefer Framework-Specific Templates + Shared Code.
+
+A framework-agnostic template is "customized" using an *Annotator*. 
 We provide an Annotator for Spring and one for CDI (Quarkus). Annotators decorate methods of a template using framework-specific annotations.  
 
-These templates are largely the same for all frameworks we support. However:
+These templates are used when the generated code is largely the same for all frameworks we support, and only the annotations are different. However:
 
-TIP: If a template is largely the same for all frameworks, you should consider **refactoring to a plain shared class**.
+TIP: If a template is largely the same for all frameworks, you should consider **refactoring to a plain shared class**, and add framework-specific templates with explicit annotations. 
+
+
 
 
 .Framework-Agnostic Template
@@ -179,7 +183,7 @@ public class TravelersMessageConsumer_3 {
 
 ### Conditional Logic in Codegen Procedures
 
-You should _avoid_ using conditional logic in code generation procedures.
+TIP: You should _avoid_ using conditional logic in code generation procedures.
 
 Good code-generation procedures _should not_ conditionally decide whether a piece of code should be generated "inline"; code generation should strive to push decision logic at the _beginning_, and then only instantiate the correct template.
 
