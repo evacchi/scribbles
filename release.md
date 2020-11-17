@@ -11,15 +11,20 @@ releasing **Kogito 1.0**! Through a combination of different technologies [Kogit
 **Build-Time Optimization, Run-Time Joy!**
 The [Kogito][kgt] platform embraces [Quarkus][qks]' AoT-first philosophy. The [Kogito extension][qex] generates the code to scaffold a complete REST service and, with developer mode, it supports live code reload not only for plain text, but even when you are using our newfangled graphic [modeling tools][kmd]!
 
-![BPMN](https://raw.githubusercontent.com/kiegroup/kie-tooling-store/master/gifs/bpmn.gif)
+![BPMN](imgs/hot-reload.gif)
 
 Not ready for hopping on [Quarkus][qks]? Fear not: the Kogito Maven plug-in supports AoT code generation for [Spring Boot][spb], too.
 
-**Standing on the Shoulders of Giants**. [Kogito][kgt] includes best-of-class support for the battle tested engines of
+**You Bring The Design, We Bring The Automation.** -- operator --
+
+**Event-Driven Architecture** -- cloud events, knative, serverless workflow --
+
+**Standing on the Shoulders of Giants.** [Kogito][kgt] includes best-of-class support for the battle tested engines of
 the [KIE][kie] platform: the [Drools][drl] rule language and decision platform, 
 the [jBPM][jbpm] workflow and process automation engine and the [OptaPlanner][opt]
 constraint satisfaction solver. 
 
+**But Seeing Further.**
 Moreover we are infusing it with exciting new capabilities:
 for instance, the [TrustyAI][tai] initiative for "trustable" Artificial Intelligence contributes services and tooling to get insights on machine-assisted decisions;
 unique to Kogito is also the implementation of the [Serverless Workflow specification][sws], for cross-platform implementation of workflows in serverless environments. 
