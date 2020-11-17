@@ -6,7 +6,7 @@ become the  foundation for our next-generation, **cloud-native business automati
 Today, [Kogito][kgt] has come a long way: we are excited to announce that we have
 releasing **Kogito 1.0**! Through a combination of different technologies [Kogito][kgt] delivers a truly **low-code** platform for the design and implementation of knowledge-oriented REST services. 
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/2Ci_WcYtLrU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Kogito Presentation Video](https://img.youtube.com/vi/2Ci_WcYtLrU/0.jpg)](https://www.youtube.com/watch?v=2Ci_WcYtLrU)
 
 **Build-Time Optimization, Run-Time Joy!**
 The [Kogito][kgt] platform embraces [Quarkus][qks]' AoT-first philosophy. The [Kogito extension][qex] generates the code to scaffold a complete REST service and, with developer mode, it supports live code reload not only for plain text, but even when you are using our newfangled graphic [modeling tools][kmd]!
