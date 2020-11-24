@@ -1,4 +1,6 @@
-For the last few month, here at [KIE][kie] team we've been hard at work; and that is one of the reasons I haven't written something new for a while. Today I am proud to announce that our **cloud-native business automation platform** is hitting a major milestone. **Today we release [Kogito 1.0][kgt]**! 
+# Kogito 1.0: AoT-Powered Business Automation in the Cloud 
+
+For the last few months, here at [KIE][kie] team we've been hard at work; and that is one of the reasons I haven't written something new for a while. Today I am proud to announce that our **cloud-native business automation platform** is hitting a major milestone. **Today we release [Kogito 1.0][kgt]**! 
 
 [Kogito][kgt] includes best-of-class support for the battle tested engines of
 the [KIE][kie] platform: 
