@@ -1,4 +1,4 @@
-# Kogito 1.0: AoT-Powered Business Automation in the Cloud 
+# Kogito 1.0: Build-Time Optimized Business Automation in the Cloud
 
 For the last few months, here at [KIE][kie] team we've been hard at work. Today I am proud to announce that our **cloud-native business automation platform** is hitting a major milestone. **Today we release [Kogito 1.0][kgt]**! 
 
@@ -11,7 +11,7 @@ the [KIE][kie] platform:
 - the [jBPM][jbpm] workflow and process automation engine,
 - the [OptaPlanner][opt] constraint satisfaction solver;
 
-and it brings along new capabilities 
+and it brings along several **new capabilities** 
 
 - our fresh new unified [BPMN](https://bpmn.new) and [DMN editors](https://dmn.new) and [VSCode-based extension](https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle)
 - the new vendor-neutral [Serverless Workflow Specification](sws)
@@ -22,6 +22,8 @@ and it brings along new capabilities
 - microservice-based data indexing and timer management
 - completely revisited UIs for task and process state 
 - CloudEvent for event handling
+
+## Code Generation
 
 I believe there is a lot to be proud of, but I want to talk more about another thing that makes Kogito special, and that is the **heavy reliance on code-generation**. 
 
@@ -42,6 +44,8 @@ Compare this to a **more traditional pipeline**, where instead the all the stage
 ![flow1](imgs/flow1.png)
 
 
+### Application Density
+
 The **Cloud**, albeit allegedly being «[just someone else's computer](https://shop.spreadshirt.co.uk/chriswatterston/)», is a deployment environment that we have to deal with. More and more businesses are using cloud platforms to deploy and run their services. Thus, because they are paying for the resources they use, they are caring more and more about them.
 
 ![I am your density](imgs/density.png)
@@ -59,6 +63,8 @@ Whichever you choose, be it Spring, or Quarkus, [Kogito][kgt] will move as much 
 
 Although build-time processing is a characterizing trait of [Kogito][kgt], code-generation is also key to another aspect. We automatically generate a service starting from the knowledge assets that users provide.
 
+### From Knowledge to Service: a Low-Code Platform
+
 You write rules, a DMN decision, a BPMN process or a serverless workflow: in all these cases, in order for these resources to be consumed, you need an API to be provided. In the past, you had full access to the power of our engines, through  a [command-based REST API for remote execution](#insert-url-here) or through their Java programmatic API, when embedding them in a larger application.
 
 While programmatic interaction will always be possible (and we are constantly improving it in Kogito to make it better, with a new API), in Kogito we aim for **low-code**. You drop your business assets in a folder, start the build process, and you get a working service running.
@@ -67,11 +73,16 @@ While programmatic interaction will always be possible (and we are constantly im
 
 In the animation you see that a single DMN file is translated into an entire fully-functional service, complete with its OpenAPI documentation and UI.
 
+
+### From Knowledge to Deployed Service: Kogito Operator
+
 Through the [Kogito Operator][kop] you are also able to go from a knowledge asset to a fully-working service in a matter of one click or one command. In this animation you can see the `kogito` cli in action: the operator picks up the knowledge assets, builds a container and deploys it to OpenShift with just 1 command!
 
 
 ![Kogito Operator](imgs/demo-operator.gif)
 
+
+### Fast Development Feedback
 
 For local development, the [Kogito Quarkus extension][qex] in developer mode extends Quarkus' native live code reloading capabilities going further from reloading plain-text source code (a feature in Quarkus core) to adding support to hot reload of graphical models supported by our [modeling tools](https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle). In this animation, for instance you can see hot-reload of a DMN decision table.
 
@@ -79,15 +90,16 @@ For local development, the [Kogito Quarkus extension][qex] in developer mode ext
 
 In this animation, we update a field of the decision table. As a result, the next time we invoke the decision, the result is different. No rebuild process is necessary, as it is all handled seamlessly by the Kogito extension. You get the feeling of live, run-time processing, but under the hood, Quarkus and Kogito do the heavy lifting of rebuilding, reloading and evaluating the asset. 
 
+### Future Work
+
 In the future we plan to support customization of these automatically-generated services, with a feature we call [**scaffolding**][scf]. With scaffolding you will also be able to customize the code that is being generated. You can already get a sneak peek of this preview feature by [following the instructions in the manual][scf].
 
 ## Conclusions
 
-Kogito 1.0 brings a lot of features..., we are excited to...
+Kogito 1.0 brings a lot of new features, we are excited for reaching this milestone and we are looking forward to seeing what you will build! Reach out for feedback on all our platforms.
 
-
-- [KIE Live YouTube Channel][kielive]
 - [Kogito Website][kgt]
+- [KIE Live YouTube Channel][kielive]
 - [KIE Zulip Chat][zlp]
 - [Kogito Mailing List][kml]
 
