@@ -67,26 +67,10 @@ While programmatic interaction will always be possible (and we are constantly im
 
 In the animation you see that a single DMN file is translated into an entire fully-functional service, complete with its OpenAPI documentation and UI.
 
-Through the [Kogito Operator][kop] you are also able to go from a knowledge asset to a fully-working service in a matter of one click or one command. In this animation you can see the `kogito` cli in action: the operator picks up the knowledge assets, builds a container and deploys it to openshift with just 3 commands!
+Through the [Kogito Operator][kop] you are also able to go from a knowledge asset to a fully-working service in a matter of one click or one command. In this animation you can see the `kogito` cli in action: the operator picks up the knowledge assets, builds a container and deploys it to OpenShift with just 1 command!
 
 
-```
-
-
-
-
-
-
-
-        Placeholder: Operator
-
-
-
-
-
-
-
-```
+![Kogito Operator](imgs/demo-operator.gif)
 
 
 For local development, the [Kogito Quarkus extension][qex] in developer mode extends Quarkus' native live code reloading capabilities going further from reloading plain-text source code (a feature in Quarkus core) to adding support to hot reload of graphical models supported by our [modeling tools](https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle). In this animation, for instance you can see hot-reload of a DMN decision table.
