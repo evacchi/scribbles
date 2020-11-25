@@ -96,7 +96,7 @@ In the future we plan to support customization of these automatically-generated 
 
 ## Conclusions
 
-Kogito 1.0 brings a lot of new features, we are excited for reaching this milestone and we are looking forward to seeing what you will build! Reach out for feedback on all our platforms.
+Kogito 1.0 brings a lot of new features, we are excited for reaching this milestone and we can't wait to see what you will build! Reach out for feedback on all our platforms!
 
 - [Kogito Website][kgt]
 - [KIE Live YouTube Channel][kielive]
